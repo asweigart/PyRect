@@ -3,4 +3,5 @@ _build
 *.pyc
 __pycache__
 PyRect.egg-info
-htmlconv
+htmlcov
+.pytest_cache
