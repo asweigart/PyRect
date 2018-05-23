@@ -1,0 +1,6 @@
+dist
+_build
+*.pyc
+__pycache__
+PyRect.egg-info
+htmlconv

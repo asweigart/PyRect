@@ -1,11 +1,14 @@
-# PyRect
+======
+PyRect
+======
 PyRect is a simple module with a Rect class for Pygame-like rectangular areas.
 
 This module is like a stand-alone version of Pygame's Rect class. It is similar to the Rect module by Simon Wittber, but compatible with both Python 2 and 3.
 
 Currently under development, though the basic features work.
 
-## Examples
+Examples
+========
 
     >>> import pyrect
     >>> rectangle = pyrect.Rect(0, 0, 20, 10)
