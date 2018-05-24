@@ -18,7 +18,7 @@ def _checkForIntOrFloat(arg):
 
 def _checkForInt(arg):
     """Raises an exception if arg is not an int. Always returns None."""
-    if not isinstance(arg, (int, float)):
+    if not isinstance(arg, int):
         raise RectException('argument must be int or float, not %s' % (arg.__class__.__name__))
 
 
@@ -459,7 +459,7 @@ class Rect(object):
     # SIZE PROPERTY (i.e. (width, height))
     @property
     def size(self):
-        return self._top + self._height
+        return (self._width, self._height)
 
     @size.setter
     def size(self, value):
