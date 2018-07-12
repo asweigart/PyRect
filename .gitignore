@@ -5,3 +5,4 @@ __pycache__
 PyRect.egg-info
 htmlcov
 .pytest_cache
+.coverage
