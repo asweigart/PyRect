@@ -48,10 +48,10 @@ def test_enableFloat():
     rect.enableFloat = False
     assert rect.topleft == (1, 2)
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         rect.enableFloat = 'invalid'
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del rect.enableFloat
 
 
@@ -93,13 +93,13 @@ def test_ctor():
 
 
     # Test invalid settings
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         pyrect.Rect('invalid', 1, 100, 200)
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         pyrect.Rect(0, 'invalid', 100, 200)
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         pyrect.Rect(0, 1, 'invalid', 200)
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         pyrect.Rect(0, 1, 100, 'invalid')
 
 
@@ -113,10 +113,10 @@ def test_top():
     assert r.width == 100
     assert r.height == 200
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.top = 'invalid'
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.top
 
     r.enableFloat = True
@@ -134,10 +134,10 @@ def test_bottom():
     assert r.width == 100
     assert r.height == 200
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.bottom = 'invalid'
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.bottom
 
     r.enableFloat = True
@@ -155,10 +155,10 @@ def test_left():
     assert r.width == 100
     assert r.height == 200
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.left = 'invalid'
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.left
 
     r.enableFloat = True
@@ -176,10 +176,10 @@ def test_right():
     assert r.width == 100
     assert r.height == 200
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.right = 'invalid'
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.right
 
     r.enableFloat = True
@@ -197,10 +197,10 @@ def test_width():
     assert r.width == 100
     assert r.height == 200
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.width = 'invalid'
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.width
 
     r.enableFloat = True
@@ -218,10 +218,10 @@ def test_height():
     assert r.width == 100
     assert r.height == 200
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.height = 'invalid'
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.height
 
     r.enableFloat = True
@@ -240,12 +240,12 @@ def test_topleft():
     assert r.width == 100
     assert r.height == 200
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.topleft = 'invalid'
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.topleft = 42
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.topleft
 
     r.enableFloat = True
@@ -264,12 +264,12 @@ def test_topright():
     assert r.width == 100
     assert r.height == 200
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.topright = 'invalid'
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.topright = 42
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.topright
 
     r.enableFloat = True
@@ -288,12 +288,12 @@ def test_bottomleft():
     assert r.width == 100
     assert r.height == 200
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.bottomleft = 'invalid'
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.bottomleft = 42
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.bottomleft
 
     r.enableFloat = True
@@ -312,12 +312,12 @@ def test_bottomright():
     assert r.width == 100
     assert r.height == 200
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.bottomright = 'invalid'
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.bottomright = 42
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.bottomright
 
     r.enableFloat = True
@@ -336,12 +336,12 @@ def test_midleft():
     assert r.width == 100
     assert r.height == 200
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.midleft = 'invalid'
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.midleft = 42
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.midleft
 
     r.enableFloat = True
@@ -360,12 +360,12 @@ def test_midright():
     assert r.width == 100
     assert r.height == 200
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.midright = 'invalid'
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.midright = 42
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.midright
 
     r.enableFloat = True
@@ -384,12 +384,12 @@ def test_midtop():
     assert r.width == 100
     assert r.height == 200
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.midtop = 'invalid'
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.midtop = 42
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.midtop
 
     r.enableFloat = True
@@ -408,12 +408,12 @@ def test_midbottom():
     assert r.width == 100
     assert r.height == 200
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.midbottom = 'invalid'
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.midbottom = 42
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.midbottom
 
     r.enableFloat = True
@@ -432,12 +432,12 @@ def test_center():
     assert r.width == 100
     assert r.height == 200
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.center = 'invalid'
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.center = 42
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.center
 
     r.enableFloat = True
@@ -456,10 +456,10 @@ def test_centerx():
     assert r.width == 100
     assert r.height == 200
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.centerx = 'invalid'
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.centerx
 
     r.enableFloat = True
@@ -478,10 +478,10 @@ def test_centery():
     assert r.width == 100
     assert r.height == 200
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.centery = 'invalid'
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.centery
 
     r.enableFloat = True
@@ -500,10 +500,10 @@ def test_size():
     assert r.width == 22
     assert r.height == 33
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.size = 'invalid'
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.size
 
     r.enableFloat = True
@@ -514,13 +514,13 @@ def test_size():
 def test__checkForIntOrFloat():
     pyrect._checkForIntOrFloat(42)
     pyrect._checkForIntOrFloat(3.14)
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         pyrect._checkForIntOrFloat('invalid')
 
 
 def test__checkForInt():
     pyrect._checkForInt(42)
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         pyrect._checkForInt(3.14)
 
 
@@ -531,13 +531,13 @@ def test__checkForTwoIntOrFloatTuple():
     pyrect._checkForTwoIntOrFloatTuple((0.5, 0.5))
 
     # Test invalid values
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         pyrect._checkForTwoIntOrFloatTuple('invalid')
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         pyrect._checkForTwoIntOrFloatTuple(('invalid', 0))
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         pyrect._checkForTwoIntOrFloatTuple((0, 'invalid'))
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         pyrect._checkForTwoIntOrFloatTuple(('invalid', 'invalid'))
 
 
@@ -562,16 +562,16 @@ def test_box():
     assert r.width == 3
     assert r.height == 4
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.box = ('invalid', 1, 100, 200)
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.box = (0, 'invalid', 100, 200)
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.box = (0, 1, 'invalid', 200)
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         r.box = (0, 1, 100, 'invalid')
 
-    with pytest.raises(pyrect.RectException):
+    with pytest.raises(pyrect.PyRectException):
         del r.box
 
     r.enableFloat = True

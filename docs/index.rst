@@ -1,23 +1,34 @@
-# Rect
+.. PyRect documentation master file, created by
+   sphinx-quickstart on Fri Aug 24 15:06:58 2018.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+==================================
+Welcome to PyRect's documentation!
+==================================
 
 Rect provides a simple Rect class for Pygame-like rectangular areas.
 
-This module is like a stand-alone version of Pygame's Rect class. The Rect module uses a new codebase, but is similar to the original Rect module by Simon Wittber. Rect is compatible with both Python 2 and 3.
+This module is like a stand-alone version of Pygame's `Rect` class. The `PyRect` module uses a new codebase, but is similar to the original Rect module by Simon Wittber. `PyRect` is compatible with both Python 2 and 3.
 
 Currently under development, though the basic features work.
 
-# Installation
+Installation
+============
 
-    pip install rect
+You can install PyRect with pip:
 
-# Example Usage
+    pip install pyrect
 
-First, create a Rect object by providing the XY coordinates of its top-left corner, and then the width and height:
+Example Usage
+=============
+
+First, create a `Rect` object by providing the XY coordinates of its top-left corner, and then the width and height:
 
     >>> import pyrect
     >>> r = pyrect.Rect(0, 0, 10, 20)
 
-There are several attributes that are automatically calculated (they have the same names as Pygame's Rect objects):
+There are several attributes that are automatically calculated (they have the same names as Pygame's `Rect` objects):
 
     >>> r.width, r.height, r.size
     (10, 20, (10, 20))
@@ -65,9 +76,12 @@ Rect objects are locked to integers, unless you set `enableFloat` to `True`:
     >>> r2.size
     (10.5, 20.5)
 
-# Rect Attributes
+Rect Attributes
+===============
 
-Rect objects have several attributes that can be read or modified. They are identical to Pygame's Rect objects:
+Rect objects have several attributes that can be read or modified. They are identical to Pygame's `Rect` objects:
+
+::
 
     x, y
     top, left, bottom, right
@@ -79,6 +93,27 @@ Rect objects have several attributes that can be read or modified. They are iden
 
 There are a couple other attributes as well:
 
+::
+
     box (a tuple (left, top, width, height))
     area (read-only)
 
+Note that a `Rect` object
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   pyrect.rst
+   modules.rst
+   roadmap.rst
+
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
