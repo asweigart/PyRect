@@ -7,34 +7,89 @@ This module is like a stand-alone version of Pygame's Rect class. It is similar 
 
 Currently under development, though the basic features work.
 
-Examples
-========
+Installation
+============
+
+    ``pip install rect``
+
+Quickstart Guide
+================
+
+First, create a Rect object by providing the XY coordinates of its top-left corner, and then the width and height:
 
     >>> import pyrect
-    >>> rectangle = pyrect.Rect(0, 0, 20, 10)
-    >>> rectangle.topleft
-    (0, 0)
-    >>> rectangle.bottomright
-    (20, 10)
-    >>> rectangle.width
-    20
-    >>> rectangle.height
+    >>> r = pyrect.Rect(0, 0, 10, 20)
+
+There are several attributes that are automatically calculated (they have the same names as Pygame's Rect objects):
+
+    >>> r.width, r.height, r.size
+    (10, 20, (10, 20))
+    >>> r. left
+    0
+    >>> r.right
     10
-    >>> rectangle.width = 100 # updating one attribute automatically updates all the others
-    >>> rectangle.bottomright
-    (100, 10)
-    >>> rectangle.left = 50
-    >>> rectangle.topleft
-    (50, 0)
-    >>> rectangle.bottomright
-    (150, 10)
-    >>> rectangle.box # the box tuple shows (left, top, width, height)
-    (50, 0, 100, 10)
+    >>> r.top
+    0
+    >>> r.bottom
+    20
+    >>> r.center
+    (5, 10)
+    >>> r.topleft
+    (0, 0)
+    >>> r.topright
+    (10, 0)
+    >>> r.midleft
+    (0, 10)
 
-    >>> floatRectangle = pyrect.Rect(0, 0.2, 20.4, 10.6, enableFloat=True) # allow float values
-    >>> floatRectangle.box
-    (0.0, 0.2, 20.4, 10.6)
+Changing these attributes re-calculates the others. The top-left corner is anchored for any growing or shrinking that takes place.
 
-    >>> intRectangle = pyrect.Rect(0, 0.2, 20.4, 10.6) # integers-only by default
-    >>> intRectangle.box
-    (0, 0, 20, 10)
+    >>> r.topleft
+    (0, 0)
+    >>> r.left = 100
+    >>> r.topleft
+    (100, 0)
+    >>> r.topright
+    (110, 0)
+    >>> r.width = 30
+    >>> r.topright
+    (130, 0)
+
+Rect objects are locked to integers, unless you set `enableFloat` to `True`:
+
+    >>> r = pyrect.Rect(0, 0, 10, 20)
+    >>> r.width = 10.5
+    >>> r.width
+    10
+    >>> r.enableFloat = True
+    >>> r.width = 10.5
+    >>> r.width
+    10.5
+    >>> r2 = pyrect.Rect(0, 0, 10.5, 20.5, enableFloat=True)
+    >>> r2.size
+    (10.5, 20.5)
+
+Rect Attributes
+===============
+
+Rect objects have several attributes that can be read or modified. They are identical to Pygame's Rect objects:
+
+    ``x, y``
+
+    ``top, left, bottom, right``
+
+    ``topleft, bottomleft, topright, bottomright``
+
+    ``midtop, midleft, midbottom, midright``
+
+    ``center, centerx, centery``
+
+    ``size, width, height``
+
+    ``w, h``
+
+There are a couple other attributes as well:
+
+    ``box (a tuple (left, top, width, height))``
+
+    ``area (read-only)``
+
