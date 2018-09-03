@@ -4,6 +4,11 @@ import os
 import pytest
 import sys
 
+USING_PY_2 = sys.version_info[0] < 3
+
+if USING_PY_2:
+    ModuleNotFoundError = None
+
 try:
     import pygame # Used for comparisons to Pygame's Rect class.
 except (ModuleNotFoundError, ImportError):

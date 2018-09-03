@@ -1,5 +1,11 @@
 from setuptools import setup
 import os
+import re
+
+# Load version from module (without loading the whole module)
+with open('pyrect/__init__.py', 'r') as fd:
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -10,7 +16,7 @@ with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='PyRect',
-    version=__import__('pyrect').__version__,
+    version=version,
     url='https://github.com/asweigart/pyrect',
     author='Al Sweigart',
     author_email='al@inventwithpython.com',
