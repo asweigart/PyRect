@@ -14,7 +14,7 @@ try:
 except (ModuleNotFoundError, ImportError):
     sys.exit('Pygame is required to run these tests so we can compare PygRect\'s rectangles to Pygame\'s rectangles.')
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+#sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pyrect
 
 
@@ -56,7 +56,7 @@ def test_enableFloat():
     with pytest.raises(pyrect.PyRectException):
         rect.enableFloat = 'invalid'
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del rect.enableFloat
 
 
@@ -121,7 +121,7 @@ def test_top():
     with pytest.raises(pyrect.PyRectException):
         r.top = 'invalid'
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.top
 
     r.enableFloat = True
@@ -142,7 +142,7 @@ def test_bottom():
     with pytest.raises(pyrect.PyRectException):
         r.bottom = 'invalid'
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.bottom
 
     r.enableFloat = True
@@ -163,7 +163,7 @@ def test_left():
     with pytest.raises(pyrect.PyRectException):
         r.left = 'invalid'
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.left
 
     r.enableFloat = True
@@ -184,7 +184,7 @@ def test_right():
     with pytest.raises(pyrect.PyRectException):
         r.right = 'invalid'
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.right
 
     r.enableFloat = True
@@ -205,7 +205,7 @@ def test_width():
     with pytest.raises(pyrect.PyRectException):
         r.width = 'invalid'
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.width
 
     r.enableFloat = True
@@ -226,7 +226,7 @@ def test_height():
     with pytest.raises(pyrect.PyRectException):
         r.height = 'invalid'
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.height
 
     r.enableFloat = True
@@ -250,7 +250,7 @@ def test_topleft():
     with pytest.raises(pyrect.PyRectException):
         r.topleft = 42
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.topleft
 
     r.enableFloat = True
@@ -274,7 +274,7 @@ def test_topright():
     with pytest.raises(pyrect.PyRectException):
         r.topright = 42
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.topright
 
     r.enableFloat = True
@@ -298,7 +298,7 @@ def test_bottomleft():
     with pytest.raises(pyrect.PyRectException):
         r.bottomleft = 42
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.bottomleft
 
     r.enableFloat = True
@@ -322,7 +322,7 @@ def test_bottomright():
     with pytest.raises(pyrect.PyRectException):
         r.bottomright = 42
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.bottomright
 
     r.enableFloat = True
@@ -346,7 +346,7 @@ def test_midleft():
     with pytest.raises(pyrect.PyRectException):
         r.midleft = 42
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.midleft
 
     r.enableFloat = True
@@ -370,7 +370,7 @@ def test_midright():
     with pytest.raises(pyrect.PyRectException):
         r.midright = 42
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.midright
 
     r.enableFloat = True
@@ -394,7 +394,7 @@ def test_midtop():
     with pytest.raises(pyrect.PyRectException):
         r.midtop = 42
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.midtop
 
     r.enableFloat = True
@@ -418,7 +418,7 @@ def test_midbottom():
     with pytest.raises(pyrect.PyRectException):
         r.midbottom = 42
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.midbottom
 
     r.enableFloat = True
@@ -442,7 +442,7 @@ def test_center():
     with pytest.raises(pyrect.PyRectException):
         r.center = 42
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.center
 
     r.enableFloat = True
@@ -464,7 +464,7 @@ def test_centerx():
     with pytest.raises(pyrect.PyRectException):
         r.centerx = 'invalid'
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.centerx
 
     r.enableFloat = True
@@ -486,7 +486,7 @@ def test_centery():
     with pytest.raises(pyrect.PyRectException):
         r.centery = 'invalid'
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.centery
 
     r.enableFloat = True
@@ -508,7 +508,7 @@ def test_size():
     with pytest.raises(pyrect.PyRectException):
         r.size = 'invalid'
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.size
 
     r.enableFloat = True
@@ -576,7 +576,7 @@ def test_box():
     with pytest.raises(pyrect.PyRectException):
         r.box = (0, 1, 100, 'invalid')
 
-    with pytest.raises(pyrect.PyRectException):
+    with pytest.raises(AttributeError):
         del r.box
 
     r.enableFloat = True
@@ -604,6 +604,295 @@ def test_eq_ne():
     assert r1 == r2
     assert not r1 != r2
 
+
+def test_onChange_intRects():
+    # TODO - using a global variable means this test can't be executed in parallel
+    global spam
+    def callbackFn(oldBox, newBox):
+        global spam
+        spam = 'changed'
+
+    # testing side changes
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.left = 0
+    assert spam == 'unchanged'
+    r.left = 1000 # changing left
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.top = 10
+    assert spam == 'unchanged'
+    r.top = 1000 # changing top
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.right = 100
+    assert spam == 'unchanged'
+    r.right = 1000 # changing right
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.bottom = 210
+    assert spam == 'unchanged'
+    r.bottom = 1000 # changing bottom
+    assert spam == 'changed'
+
+    # testing size changes
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.width = 100
+    assert spam == 'unchanged'
+    r.width = 1000 # changing width
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.height = 200
+    assert spam == 'unchanged'
+    r.height = 1000 # changing height
+    assert spam == 'changed'
+
+
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.size = (100, 200)
+    assert spam == 'unchanged'
+    r.size = (1000, 200) # changing width
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.size = (1000, 1000) # changing height
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.size = (2000, 2000) # changing width and height
+    assert spam == 'changed'
+
+
+    # testing corner changes
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.topleft = (0, 10)
+    assert spam == 'unchanged'
+    r.topleft = (1000, 10) # changing left
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.topleft = (1000, 1000) # changing top
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.topleft = (2000, 2000) # changing top and left
+    assert spam == 'changed'
+
+
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.topright = (100, 10)
+    assert spam == 'unchanged'
+    r.topright = (1000, 10) # changing right
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.topright = (1000, 1000) # changing top
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.topright = (2000, 2000) # changing top and left
+    assert spam == 'changed'
+
+
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.bottomleft = (0, 210)
+    assert spam == 'unchanged'
+    r.bottomleft = (1000, 10) # changing left
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.bottomleft = (1000, 1000) # changing bottom
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.bottomleft = (2000, 2000) # changing bottom and left
+    assert spam == 'changed'
+
+
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.bottomright = (100, 210)
+    assert spam == 'unchanged'
+    r.bottomright = (1000, 210) # changing right
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.bottomright = (1000, 1000) # changing bottom
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.bottomright = (2000, 2000) # changing bottom and right
+    assert spam == 'changed'
+
+
+    # test midpoints
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.midleft = (0, 110)
+    assert spam == 'unchanged'
+    r.midleft = (1000, 110) # changing right
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.midleft = (1000, 1000) # changing mid left
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.midleft = (2000, 2000) # changing mid left and right
+    assert spam == 'changed'
+
+
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.midright = (100, 110)
+    assert spam == 'unchanged'
+    r.midright = (1000, 110) # changing right
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.midright = (1000, 1000) # changing mid right
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.midright = (2000, 2000) # changing mid right and right
+    assert spam == 'changed'
+
+
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.midtop = (50, 10)
+    assert spam == 'unchanged'
+    r.midtop = (1000, 10) # changing mid top
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.midtop = (1000, 1000) # changing top
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.midtop = (2000, 2000) # changing mid top and top
+    assert spam == 'changed'
+
+
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.midbottom = (50, 210)
+    assert spam == 'unchanged'
+    r.midbottom = (1000, 210) # changing mid bottom
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.midbottom = (1000, 1000) # changing bottom
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.midbottom = (2000, 2000) # changing bottom and mid bottom
+    assert spam == 'changed'
+
+    # testing center
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.center = (50, 110)
+    assert spam == 'unchanged'
+    r.center = (1000, 110) # changing centerx
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.center = (1000, 1000) # changing centery
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.center = (2000, 2000) # changing centerx and centery
+    assert spam == 'changed'
+
+
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.centerx = 50
+    assert spam == 'unchanged'
+    r.centerx = 1000 # changing centerx
+    assert spam == 'changed'
+
+
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.centery = 110
+    assert spam == 'unchanged'
+    r.centery = 1000 # changing mid bottom
+    assert spam == 'changed'
+
+    # testing box
+    spam = 'unchanged'
+    r = pyrect.Rect(0, 10, 100, 200, onChange=callbackFn)
+    r.box = (0, 10, 100, 200)
+    assert spam == 'unchanged'
+    r.box = (1000, 10, 100, 200) # changing left
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.box = (1000, 2000, 100, 200) # changing top
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.box = (1000, 2000, 3000, 200) # changing width
+    assert spam == 'changed'
+
+    spam = 'unchanged'
+    r.box = (1000, 2000, 3000, 4000) # changing height
+    assert spam == 'changed'
+
+
+def test_readonly():
+    r = pyrect.Rect(0, 10, 100, 200, readOnly=True)
+    with pytest.raises(pyrect.PyRectException):
+        r.left = 1000
+    with pytest.raises(pyrect.PyRectException):
+        r.right = 1000
+    with pytest.raises(pyrect.PyRectException):
+        r.top = 1000
+    with pytest.raises(pyrect.PyRectException):
+        r.bottom = 1000
+    with pytest.raises(pyrect.PyRectException):
+        r.centerx = 1000
+    with pytest.raises(pyrect.PyRectException):
+        r.centery = 1000
+    with pytest.raises(pyrect.PyRectException):
+        r.width = 1000
+    with pytest.raises(pyrect.PyRectException):
+        r.height = 1000
+    with pytest.raises(pyrect.PyRectException):
+        r.topleft = (1000, 2000)
+    with pytest.raises(pyrect.PyRectException):
+        r.topright = (1000, 2000)
+    with pytest.raises(pyrect.PyRectException):
+        r.bottomleft = (1000, 2000)
+    with pytest.raises(pyrect.PyRectException):
+        r.bottomright = (1000, 2000)
+    with pytest.raises(pyrect.PyRectException):
+        r.size = (1000, 2000)
+    with pytest.raises(pyrect.PyRectException):
+        r.midleft = (1000, 2000)
+    with pytest.raises(pyrect.PyRectException):
+        r.midright = (1000, 2000)
+    with pytest.raises(pyrect.PyRectException):
+        r.midtop = (1000, 2000)
+    with pytest.raises(pyrect.PyRectException):
+        r.midbottom = (1000, 2000)
+    with pytest.raises(pyrect.PyRectException):
+        r.box = (1000, 2000, 3000, 4000)
 
 
 if __name__ == '__main__':

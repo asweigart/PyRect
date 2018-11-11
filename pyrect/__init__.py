@@ -130,13 +130,18 @@ def collideAllBetween(rectsOrPoints):
 '''
 
 class Rect(object):
-    def __init__(self, left, top, width, height, enableFloat=False):
+    def __init__(self, left, top, width, height, enableFloat=False, readOnly=False, onChange=None):
         _checkForIntOrFloat(width)
         _checkForIntOrFloat(height)
         _checkForIntOrFloat(left)
         _checkForIntOrFloat(top)
 
-        self._enableFloat = enableFloat
+        self._enableFloat = bool(enableFloat)
+        self._readOnly = bool(readOnly)
+
+        if onChange is not None and not callable(onChange):
+            raise PyRectException('onChange argument must be callable (function, method, etc.)')
+        self.onChange = onChange
 
         if enableFloat:
             self._width  = float(width)
@@ -159,6 +164,13 @@ class Rect(object):
     def __str__(self):
         """Return a string representation of this Rect object."""
         return '(x=%s, y=%s, w=%s, h=%s)' % (self._left, self._top, self._width, self._height)
+
+
+    def callOnChange(self, oldLeft, oldTop, oldWidth, oldHeight):
+        # Note: callOnChange() should be called *after* the attribute has been changed.
+        if self.onChange is not None:
+            self.onChange((oldLeft, oldTop, oldWidth, oldHeight), self.box)
+
 
     @property
     def enableFloat(self):
@@ -194,11 +206,6 @@ class Rect(object):
             self._height = int(self._height)
 
 
-    @enableFloat.deleter
-    def enableFloat(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
-
-
     # LEFT SIDE PROPERTY
     @property
     def left(self):
@@ -215,18 +222,18 @@ class Rect(object):
         return self._left
 
     @left.setter
-    def left(self, value):
-        _checkForIntOrFloat(value)
-        if self._enableFloat:
-            self._left = value
-        else:
-            self._left = int(value)
+    def left(self, newLeft):
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-
-    @left.deleter
-    def left(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
-
+        _checkForIntOrFloat(newLeft)
+        if newLeft != self._left: # Only run this code if the size/position has changed.
+            originalLeft = self._left
+            if self._enableFloat:
+                self._left = newLeft
+            else:
+                self._left = int(newLeft)
+            self.callOnChange(originalLeft, self._top, self._width, self._height)
 
     x = left # x is an alias for left
 
@@ -247,16 +254,18 @@ class Rect(object):
         return self._top
 
     @top.setter
-    def top(self, value):
-        _checkForIntOrFloat(value)
-        if self._enableFloat:
-            self._top = value
-        else:
-            self._top = int(value)
+    def top(self, newTop):
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-    @top.deleter
-    def top(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        _checkForIntOrFloat(newTop)
+        if newTop != self._top: # Only run this code if the size/position has changed.
+            originalTop = self._top
+            if self._enableFloat:
+                self._top = newTop
+            else:
+                self._top = int(newTop)
+            self.callOnChange(self._left, originalTop, self._width, self._height)
 
     y = top # y is an alias for top
 
@@ -277,16 +286,18 @@ class Rect(object):
         return self._left + self._width
 
     @right.setter
-    def right(self, value):
-        _checkForIntOrFloat(value)
-        if self._enableFloat:
-            self._left = value - self._width
-        else:
-            self._left = int(value) - self._width
+    def right(self, newRight):
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-    @right.deleter
-    def right(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        _checkForIntOrFloat(newRight)
+        if newRight != self.right: # Only run this code if the size/position has changed.
+            originalLeft = self._left
+            if self._enableFloat:
+                self._left = newRight - self._width
+            else:
+                self._left = int(newRight) - self._width
+            self.callOnChange(originalLeft, self._top, self._width, self._height)
 
 
     # BOTTOM SIDE PROPERTY
@@ -304,16 +315,18 @@ class Rect(object):
         return self._top + self._height
 
     @bottom.setter
-    def bottom(self, value):
-        _checkForIntOrFloat(value)
-        if self._enableFloat:
-            self._top = value - self._height
-        else:
-            self._top = int(value) - self._height
+    def bottom(self, newBottom):
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-    @bottom.deleter
-    def bottom(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        _checkForIntOrFloat(newBottom)
+        if newBottom != self.bottom: # Only run this code if the size/position has changed.
+            originalTop = self._top
+            if self._enableFloat:
+                self._top = newBottom - self._height
+            else:
+                self._top = int(newBottom) - self._height
+            self.callOnChange(self._left, originalTop, self._width, self._height)
 
 
     # TOP LEFT CORNER PROPERTY
@@ -333,17 +346,21 @@ class Rect(object):
 
     @topleft.setter
     def topleft(self, value):
-        _checkForTwoIntOrFloatTuple(value)
-        if self._enableFloat:
-            self._left = value[0]
-            self._top = value[1]
-        else:
-            self._left = int(value[0])
-            self._top = int(value[1])
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-    @topleft.deleter
-    def topleft(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        _checkForTwoIntOrFloatTuple(value)
+        newLeft, newTop = value
+        if (newLeft != self._left) or (newTop != self._top): # Only run this code if the size/position has changed.
+            originalLeft = self._left
+            originalTop = self._top
+            if self._enableFloat:
+                self._left = newLeft
+                self._top = newTop
+            else:
+                self._left = int(newLeft)
+                self._top = int(newTop)
+            self.callOnChange(originalLeft, originalTop, self._width, self._height)
 
 
     # BOTTOM LEFT CORNER PROPERTY
@@ -363,17 +380,21 @@ class Rect(object):
 
     @bottomleft.setter
     def bottomleft(self, value):
-        _checkForTwoIntOrFloatTuple(value)
-        if self._enableFloat:
-            self._left = value[0]
-            self._top = value[1] - self._height
-        else:
-            self._left = int(value[0])
-            self._top = int(value[1]) - self._height
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-    @bottomleft.deleter
-    def bottomleft(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        _checkForTwoIntOrFloatTuple(value)
+        newLeft, newBottom = value
+        if (newLeft != self._left) or (newBottom != self.bottom): # Only run this code if the size/position has changed.
+            originalLeft = self._left
+            originalTop = self._top
+            if self._enableFloat:
+                self._left = newLeft
+                self._top = newBottom - self._height
+            else:
+                self._left = int(newLeft)
+                self._top = int(newBottom) - self._height
+            self.callOnChange(originalLeft, originalTop, self._width, self._height)
 
 
     # TOP RIGHT CORNER PROPERTY
@@ -393,17 +414,21 @@ class Rect(object):
 
     @topright.setter
     def topright(self, value):
-        _checkForTwoIntOrFloatTuple(value)
-        if self._enableFloat:
-            self._left = value[0] - self._width
-            self._top = value[1]
-        else:
-            self._left = int(value[0]) - self._width
-            self._top = int(value[1])
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-    @topright.deleter
-    def topright(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        _checkForTwoIntOrFloatTuple(value)
+        newRight, newTop = value
+        if (newRight != self.right) or (newTop != self._top): # Only run this code if the size/position has changed.
+            originalLeft = self._left
+            originalTop = self._top
+            if self._enableFloat:
+                self._left = newRight - self._width
+                self._top = newTop
+            else:
+                self._left = int(newRight) - self._width
+                self._top = int(newTop)
+            self.callOnChange(originalLeft, originalTop, self._width, self._height)
 
 
     # BOTTOM RIGHT CORNER PROPERTY
@@ -423,17 +448,21 @@ class Rect(object):
 
     @bottomright.setter
     def bottomright(self, value):
-        _checkForTwoIntOrFloatTuple(value)
-        if self._enableFloat:
-            self._left = value[0] - self._width
-            self._top = value[1] - self._height
-        else:
-            self._left = int(value[0]) - self._width
-            self._top = int(value[1]) - self._height
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-    @bottomright.deleter
-    def bottomright(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        _checkForTwoIntOrFloatTuple(value)
+        newRight, newBottom = value
+        if (newBottom != self.bottom) or (newRight != self.right): # Only run this code if the size/position has changed.
+            originalLeft = self._left
+            originalTop = self._top
+            if self._enableFloat:
+                self._left = newRight - self._width
+                self._top = newBottom - self._height
+            else:
+                self._left = int(newRight) - self._width
+                self._top = int(newBottom) - self._height
+            self.callOnChange(originalLeft, originalTop, self._width, self._height)
 
 
     # MIDDLE OF TOP SIDE PROPERTY
@@ -456,17 +485,23 @@ class Rect(object):
 
     @midtop.setter
     def midtop(self, value):
-        _checkForTwoIntOrFloatTuple(value)
-        if self._enableFloat:
-            self._left = value[0] - (self._width / 2.0)
-            self._top = value[1]
-        else:
-            self._left = int(value[0]) - (self._width // 2)
-            self._top = int(value[1])
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-    @midtop.deleter
-    def midtop(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        _checkForTwoIntOrFloatTuple(value)
+        newMidTop, newTop = value
+        originalLeft = self._left
+        originalTop = self._top
+        if self._enableFloat:
+            if (newMidTop != self._left + self._width / 2.0) or (newTop != self._top): # Only run this code if the size/position has changed.
+                self._left = newMidTop - (self._width / 2.0)
+                self._top = newTop
+                self.callOnChange(originalLeft, originalTop, self._width, self._height)
+        else:
+            if (newMidTop != self._left + self._width // 2) or (newTop != self._top): # Only run this code if the size/position has changed.
+                self._left = int(newMidTop) - (self._width // 2)
+                self._top = int(newTop)
+                self.callOnChange(originalLeft, originalTop, self._width, self._height)
 
 
     # MIDDLE OF BOTTOM SIDE PROPERTY
@@ -489,17 +524,23 @@ class Rect(object):
 
     @midbottom.setter
     def midbottom(self, value):
-        _checkForTwoIntOrFloatTuple(value)
-        if self._enableFloat:
-            self._left = value[0] - (self._width / 2.0)
-            self._top = value[1] - self._height
-        else:
-            self._left = int(value[0]) - (self._width // 2)
-            self._top = int(value[1]) - self._height
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-    @midbottom.deleter
-    def midbottom(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        _checkForTwoIntOrFloatTuple(value)
+        newMidBottom, newBottom = value
+        originalLeft = self._left
+        originalTop = self._top
+        if self._enableFloat:
+            if (newMidBottom != self._left + self._width / 2.0) or (newBottom != self.bottom): # Only run this code if the size/position has changed.
+                self._left = newMidBottom - (self._width / 2.0)
+                self._top = newBottom - self._height
+                self.callOnChange(originalLeft, originalTop, self._width, self._height)
+        else:
+            if (newMidBottom != self._left + self._width // 2) or (newBottom != self.bottom): # Only run this code if the size/position has changed.
+                self._left = int(newMidBottom) - (self._width // 2)
+                self._top = int(newBottom) - self._height
+                self.callOnChange(originalLeft, originalTop, self._width, self._height)
 
 
     # MIDDLE OF LEFT SIDE PROPERTY
@@ -523,17 +564,23 @@ class Rect(object):
 
     @midleft.setter
     def midleft(self, value):
-        _checkForTwoIntOrFloatTuple(value)
-        if self._enableFloat:
-            self._left = value[0]
-            self._top = value[1] - (self._height / 2.0)
-        else:
-            self._left = int(value[0])
-            self._top = int(value[1]) - (self._height // 2)
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-    @midleft.deleter
-    def midleft(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        _checkForTwoIntOrFloatTuple(value)
+        newLeft, newMidLeft = value
+        originalLeft = self._left
+        originalTop = self._top
+        if self._enableFloat:
+            if (newLeft != self._left) or (newMidLeft != self.midleft[1]): # Only run this code if the size/position has changed.
+                self._left = newLeft
+                self._top = newMidLeft - (self._height / 2.0)
+                self.callOnChange(originalLeft, originalTop, self._width, self._height)
+        else:
+            if (newLeft != self._left) or (newMidLeft != self.midleft[1]): # Only run this code if the size/position has changed.
+                self._left = int(newLeft)
+                self._top = int(newMidLeft) - (self._height // 2)
+                self.callOnChange(originalLeft, originalTop, self._width, self._height)
 
 
     # MIDDLE OF RIGHT SIDE PROPERTY
@@ -557,17 +604,23 @@ class Rect(object):
 
     @midright.setter
     def midright(self, value):
-        _checkForTwoIntOrFloatTuple(value)
-        if self._enableFloat:
-            self._left = value[0] - self._width
-            self._top = value[1] - (self._height / 2.0)
-        else:
-            self._left = int(value[0]) - self._width
-            self._top = int(value[1]) - (self._height // 2)
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-    @midright.deleter
-    def midright(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        _checkForTwoIntOrFloatTuple(value)
+        newRight, newMidRight = value
+        originalLeft = self._left
+        originalTop = self._top
+        if self._enableFloat:
+            if (newRight != self.right) or (newMidRight != self._top + self._height / 2.0): # Only run this code if the size/position has changed.
+                self._left = newRight - self._width
+                self._top = newMidRight - (self._height / 2.0)
+                self.callOnChange(originalLeft, originalTop, self._width, self._height)
+        else:
+            if (newRight != self.right) or (newMidRight != self._top + self._height // 2): # Only run this code if the size/position has changed.
+                self._left = int(newRight) - self._width
+                self._top = int(newMidRight) - (self._height // 2)
+                self.callOnChange(originalLeft, originalTop, self._width, self._height)
 
 
     # CENTER POINT PROPERTY
@@ -590,17 +643,23 @@ class Rect(object):
 
     @center.setter
     def center(self, value):
-        _checkForTwoIntOrFloatTuple(value)
-        if self._enableFloat:
-            self._left = value[0] - (self._width / 2.0)
-            self._top = value[1] - (self._height / 2.0)
-        else:
-            self._left = int(value[0]) - (self._width // 2)
-            self._top = int(value[1]) - (self._height // 2)
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-    @center.deleter
-    def center(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        _checkForTwoIntOrFloatTuple(value)
+        newCenterx, newCentery = value
+        originalLeft = self._left
+        originalTop = self._top
+        if self._enableFloat:
+            if (newCenterx != self._left + self._width / 2.0) or (newCentery != self._top + self._height / 2.0): # Only run this code if the size/position has changed.
+                self._left = newCenterx - (self._width / 2.0)
+                self._top = newCentery - (self._height / 2.0)
+                self.callOnChange(originalLeft, originalTop, self._width, self._height)
+        else:
+            if (newCenterx != self._left + self._width // 2) or (newCentery != self._top + self._height // 2): # Only run this code if the size/position has changed.
+                self._left = int(newCenterx) - (self._width // 2)
+                self._top = int(newCentery) - (self._height // 2)
+                self.callOnChange(originalLeft, originalTop, self._width, self._height)
 
 
     # X COORDINATE OF CENTER POINT PROPERTY
@@ -622,16 +681,20 @@ class Rect(object):
             return self._left + (self._width // 2)
 
     @centerx.setter
-    def centerx(self, value):
-        _checkForIntOrFloat(value)
-        if self._enableFloat:
-            self._left = value - (self._width / 2.0)
-        else:
-            self._left = int(value) - (self._width // 2)
+    def centerx(self, newCenterx):
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-    @centerx.deleter
-    def centerx(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        _checkForIntOrFloat(newCenterx)
+        originalLeft = self._left
+        if self._enableFloat:
+            if (newCenterx != self._left + self._width / 2.0): # Only run this code if the size/position has changed.
+                self._left = newCenterx - (self._width / 2.0)
+                self.callOnChange(originalLeft, self._top, self._width, self._height)
+        else:
+            if (newCenterx != self._left + self._width // 2): # Only run this code if the size/position has changed.
+                self._left = int(newCenterx) - (self._width // 2)
+                self.callOnChange(originalLeft, self._top, self._width, self._height)
 
 
     # Y COORDINATE OF CENTER POINT PROPERTY
@@ -653,16 +716,20 @@ class Rect(object):
             return self._top + (self._height // 2)
 
     @centery.setter
-    def centery(self, value):
-        _checkForIntOrFloat(value)
-        if self._enableFloat:
-            self._top = value - (self._height / 2.0)
-        else:
-            self._top = int(value) - (self._height // 2)
+    def centery(self, newCentery):
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-    @centery.deleter
-    def centery(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        _checkForIntOrFloat(newCentery)
+        originalTop = self._top
+        if self._enableFloat:
+            if (newCentery != self._top + self._height / 2.0): # Only run this code if the size/position has changed.
+                self._top = newCentery - (self._height / 2.0)
+                self.callOnChange(self._left, originalTop, self._width, self._height)
+        else:
+            if (newCentery != self._top + self._height // 2): # Only run this code if the size/position has changed.
+                self._top = int(newCentery) - (self._height // 2)
+                self.callOnChange(self._left, originalTop, self._width, self._height)
 
 
     # SIZE PROPERTY (i.e. (width, height))
@@ -682,17 +749,21 @@ class Rect(object):
 
     @size.setter
     def size(self, value):
-        _checkForTwoIntOrFloatTuple(value)
-        if self._enableFloat:
-            self._width = value[0]
-            self._height = value[1]
-        else:
-            self._width = int(value[0])
-            self._height = int(value[1])
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-    @size.deleter
-    def size(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        _checkForTwoIntOrFloatTuple(value)
+        newWidth, newHeight = value
+        if newWidth != self._width or newHeight != self._height:
+            originalWidth = self._width
+            originalHeight = self._height
+            if self._enableFloat:
+                self._width = newWidth
+                self._height = newHeight
+            else:
+                self._width = int(newWidth)
+                self._height = int(newHeight)
+            self.callOnChange(self._left, self._top, originalWidth, originalHeight)
 
 
     # WIDTH PROPERTY
@@ -711,18 +782,21 @@ class Rect(object):
         return self._width
 
     @width.setter
-    def width(self, value):
-        _checkForIntOrFloat(value)
-        if self._enableFloat:
-            self._width = value
-        else:
-            self._width = int(value)
+    def width(self, newWidth):
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-    @width.deleter
-    def width(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        _checkForIntOrFloat(newWidth)
+        if (newWidth != self._width): # Only run this code if the size/position has changed.
+            originalWidth = self._width
+            if self._enableFloat:
+                    self._width = newWidth
+            else:
+                self._width = int(newWidth)
+            self.callOnChange(self._left, self._top, originalWidth, self._height)
 
     w = width
+
 
     # HEIGHT PROPERTY
     @property
@@ -740,16 +814,18 @@ class Rect(object):
         return self._height
 
     @height.setter
-    def height(self, value):
-        _checkForIntOrFloat(value)
-        if self._enableFloat:
-            self._height = value
-        else:
-            self._height = int(value)
+    def height(self, newHeight):
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
 
-    @height.deleter
-    def height(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        _checkForIntOrFloat(newHeight)
+        if (newHeight != self._height): # Only run this code if the size/position has changed.
+            originalHeight = self._height
+            if self._enableFloat:
+                self._height = newHeight
+            else:
+                self._height = int(newHeight)
+            self.callOnChange(self._left, self._top, self._width, originalHeight)
 
     h = height
 
@@ -782,22 +858,27 @@ class Rect(object):
 
     @box.setter
     def box(self, value):
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
+
         _checkForFourIntOrFloatTuple(value)
-        if self._enableFloat:
-            self._left   = float(value[0])
-            self._top    = float(value[1])
-            self._width  = float(value[2])
-            self._height = float(value[3])
-        else:
-            self._left   = int(value[0])
-            self._top    = int(value[1])
-            self._width  = int(value[2])
-            self._height = int(value[3])
-
-
-    @box.deleter
-    def box(self):
-        raise PyRectException('%r object attributes aren\'t deletable' % (self.__class__.__name__))
+        newLeft, newTop, newWidth, newHeight = value
+        if (newLeft != self._left) or (newTop != self._top) or (newWidth != self._width) or (newHeight != self._height):
+            originalLeft = self._left
+            originalTop = self._top
+            originalWidth = self._width
+            originalHeight = self._height
+            if self._enableFloat:
+                self._left   = float(newLeft)
+                self._top    = float(newTop)
+                self._width  = float(newWidth)
+                self._height = float(newHeight)
+            else:
+                self._left   = int(newLeft)
+                self._top    = int(newTop)
+                self._width  = int(newWidth)
+                self._height = int(newHeight)
+            self.callOnChange(originalLeft, originalTop, originalWidth, originalHeight)
 
 
     def move(self, xOffset, yOffset):
@@ -808,6 +889,9 @@ class Rect(object):
         >>> r
         Rect(left=10, top=20, width=100, height=100)
         """
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
+
         _checkForIntOrFloat(xOffset)
         _checkForIntOrFloat(yOffset)
         if self._enableFloat:
@@ -829,7 +913,7 @@ class Rect(object):
         >>> r2
         Rect(left=0, top=0, width=100, height=150)
         """
-        return Rect(self._left, self._top, self._width, self._height)
+        return Rect(self._left, self._top, self._width, self._height, self._enableFloat, self._readOnly)
 
 
     def inflate(self, widthChange=0, heightChange=0):
@@ -842,6 +926,9 @@ class Rect(object):
         >>> r
         Rect(left=-10, top=-20, width=120, height=190)
         """
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
+
         originalCenter = self.center
         self.width += widthChange
         self.height += heightChange
@@ -859,6 +946,9 @@ class Rect(object):
         >>> r1.center == r2.center
         True
         """
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
+
         self.center = otherRect.center
 
     '''
@@ -943,6 +1033,9 @@ class Rect(object):
         >>> r
         Rect(left=-10, top=-20, width=10, height=20)
         """
+        if self._readOnly:
+            raise PyRectException('Rect object is read-only')
+
         if self._width < 0:
             self._width = -self._width
             self._left -= self._width
