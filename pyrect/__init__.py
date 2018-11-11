@@ -331,21 +331,21 @@ class Rect(object):
 
     # TOP LEFT CORNER PROPERTY
     @property
-    def topLeft(self):
+    def topleft(self):
         """
         The x and y coordinates for the top right corner of the rectangle, as a tuple.
 
         >>> r = Rect(0, 0, 10, 20)
-        >>> r.topLeft
+        >>> r.topleft
         (0, 0)
-        >>> r.topLeft = (30, 30)
+        >>> r.topleft = (30, 30)
         >>> r
         Rect(left=30, top=30, width=10, height=20)
         """
         return (self._left, self._top)
 
-    @topLeft.setter
-    def topLeft(self, value):
+    @topleft.setter
+    def topleft(self, value):
         if self._readOnly:
             raise PyRectException('Rect object is read-only')
 
@@ -365,21 +365,21 @@ class Rect(object):
 
     # BOTTOM LEFT CORNER PROPERTY
     @property
-    def bottomLeft(self):
+    def bottomleft(self):
         """
         The x and y coordinates for the bottom right corner of the rectangle, as a tuple.
 
         >>> r = Rect(0, 0, 10, 20)
-        >>> r.bottomLeft
+        >>> r.bottomleft
         (0, 20)
-        >>> r.bottomLeft = (30, 30)
+        >>> r.bottomleft = (30, 30)
         >>> r
         Rect(left=30, top=10, width=10, height=20)
         """
         return (self._left, self._top + self._height)
 
-    @bottomLeft.setter
-    def bottomLeft(self, value):
+    @bottomleft.setter
+    def bottomleft(self, value):
         if self._readOnly:
             raise PyRectException('Rect object is read-only')
 
@@ -399,21 +399,21 @@ class Rect(object):
 
     # TOP RIGHT CORNER PROPERTY
     @property
-    def topRight(self):
+    def topright(self):
         """
         The x and y coordinates for the top right corner of the rectangle, as a tuple.
 
         >>> r = Rect(0, 0, 10, 20)
-        >>> r.topRight
+        >>> r.topright
         (10, 0)
-        >>> r.topRight = (30, 30)
+        >>> r.topright = (30, 30)
         >>> r
         Rect(left=20, top=30, width=10, height=20)
         """
         return (self._left + self._width, self._top)
 
-    @topRight.setter
-    def topRight(self, value):
+    @topright.setter
+    def topright(self, value):
         if self._readOnly:
             raise PyRectException('Rect object is read-only')
 
@@ -433,21 +433,21 @@ class Rect(object):
 
     # BOTTOM RIGHT CORNER PROPERTY
     @property
-    def bottomRight(self):
+    def bottomright(self):
         """
         The x and y coordinates for the bottom right corner of the rectangle, as a tuple.
 
         >>> r = Rect(0, 0, 10, 20)
-        >>> r.bottomRight
+        >>> r.bottomright
         (10, 20)
-        >>> r.bottomRight = (30, 30)
+        >>> r.bottomright = (30, 30)
         >>> r
         Rect(left=20, top=10, width=10, height=20)
         """
         return (self._left + self._width, self._top + self._height)
 
-    @bottomRight.setter
-    def bottomRight(self, value):
+    @bottomright.setter
+    def bottomright(self, value):
         if self._readOnly:
             raise PyRectException('Rect object is read-only')
 
@@ -1047,7 +1047,7 @@ class Rect(object):
 
     def __contains__(self, value): # for either points or other Rect objects. For Rects, the *entire* Rect must be in this Rect.
         if isinstance(value, Rect):
-            return value.topLeft in self and value.topRight in self and value.bottomLeft in self and value.bottomRight in self
+            return value.topleft in self and value.topright in self and value.bottomleft in self and value.bottomright in self
 
         # Check if value is an (x, y) sequence or a (left, top, width, height) sequence.
         try:
@@ -1081,7 +1081,7 @@ class Rect(object):
         # because __contains__() requires the rectangular are to be COMPELTELY
         # within the Rect object.
         if isinstance(value, Rect):
-            return value.topLeft in self or value.topRight in self or value.bottomLeft in self or value.bottomRight in self
+            return value.topleft in self or value.topright in self or value.bottomleft in self or value.bottomright in self
 
         # Check if value is an (x, y) sequence or a (left, top, width, height) sequence.
         try:
