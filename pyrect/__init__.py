@@ -5,7 +5,7 @@ import collections
 
 # TODO - unit tests needed for get/set and Box named tuple
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 
 # Constants for rectangle attributes:
