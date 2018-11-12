@@ -1,9 +1,36 @@
 import doctest
+import collections
 
 # TODO - finish doc tests
 
-__version__ = '0.1.0'
+# TODO - unit tests needed for get/set and Box named tuple
 
+__version__ = '0.1.2'
+
+
+# Constants for rectangle attributes:
+TOP = 'top'
+BOTTOM = 'bottom'
+LEFT = 'left'
+RIGHT = 'right'
+TOPLEFT = 'topleft'
+TOPRIGHT = 'topright'
+BOTTOMLEFT = 'bottomleft'
+BOTTOMRIGHT = 'bottomright'
+MIDTOP = 'midtop'
+MIDRIGHT = 'midright'
+MIDLEFT = 'midleft'
+MIDBOTTOM = 'midbottom'
+CENTER = 'center'
+CENTERX = 'centerx'
+CENTERY = 'centery'
+WIDTH = 'width'
+HEIGHT = 'height'
+SIZE = 'size'
+BOX = 'box'
+AREA = 'area'
+
+Box = collections.namedtuple('Box', 'left top width height')
 
 class PyRectException(Exception):
     """
@@ -11,7 +38,6 @@ class PyRectException(Exception):
     non-PyRectException exceptions, this indicates there's a bug in PyRect.
     """
     pass
-
 
 
 def _checkForIntOrFloat(arg):
@@ -64,6 +90,7 @@ def _getRectsAndPoints(rectsOrPoints):
                 raise PyRectException('argument is not a point or a rect tuple')
             rects.append(rectOrPoint)
     return (rects, points)
+
 
 '''
 def collideAnyBetween(rectsOrPoints):
@@ -130,7 +157,7 @@ def collideAllBetween(rectsOrPoints):
 '''
 
 class Rect(object):
-    def __init__(self, left, top, width, height, enableFloat=False, readOnly=False, onChange=None):
+    def __init__(self, left=0, top=0, width=0, height=0, enableFloat=False, readOnly=False, onChange=None, onRead=None):
         _checkForIntOrFloat(width)
         _checkForIntOrFloat(height)
         _checkForIntOrFloat(left)
@@ -140,8 +167,12 @@ class Rect(object):
         self._readOnly = bool(readOnly)
 
         if onChange is not None and not callable(onChange):
-            raise PyRectException('onChange argument must be callable (function, method, etc.)')
+            raise PyRectException('onChange argument must be None or callable (function, method, etc.)')
         self.onChange = onChange
+
+        if onRead is not None and not callable(onRead):
+            raise PyRectException('onRead argument must be None or callable (function, method, etc.)')
+        self.onRead = onRead
 
         if enableFloat:
             self._width  = float(width)
@@ -168,8 +199,9 @@ class Rect(object):
 
     def callOnChange(self, oldLeft, oldTop, oldWidth, oldHeight):
         # Note: callOnChange() should be called *after* the attribute has been changed.
+        # Note: This isn't thread safe; the attributes can change between the calling of this function and the code in the function running.
         if self.onChange is not None:
-            self.onChange((oldLeft, oldTop, oldWidth, oldHeight), self.box)
+            self.onChange(Box(oldLeft, oldTop, oldWidth, oldHeight), Box(self._left, self._top, self._width, self._height))
 
 
     @property
@@ -219,6 +251,8 @@ class Rect(object):
         >>> r
         Rect(left=50, top=0, width=10, height=20)
         """
+        if self.onRead is not None:
+            self.onRead(LEFT)
         return self._left
 
     @left.setter
@@ -251,6 +285,8 @@ class Rect(object):
         >>> r
         Rect(left=0, top=50, width=10, height=20)
         """
+        if self.onRead is not None:
+            self.onRead(TOP)
         return self._top
 
     @top.setter
@@ -283,6 +319,8 @@ class Rect(object):
         >>> r
         Rect(left=40, top=0, width=10, height=20)
         """
+        if self.onRead is not None:
+            self.onRead(RIGHT)
         return self._left + self._width
 
     @right.setter
@@ -291,7 +329,7 @@ class Rect(object):
             raise PyRectException('Rect object is read-only')
 
         _checkForIntOrFloat(newRight)
-        if newRight != self.right: # Only run this code if the size/position has changed.
+        if newRight != self._left + self._width: # Only run this code if the size/position has changed.
             originalLeft = self._left
             if self._enableFloat:
                 self._left = newRight - self._width
@@ -312,6 +350,8 @@ class Rect(object):
         >>> r
         Rect(left=0, top=10, width=10, height=20)
         """
+        if self.onRead is not None:
+            self.onRead(BOTTOM)
         return self._top + self._height
 
     @bottom.setter
@@ -320,7 +360,7 @@ class Rect(object):
             raise PyRectException('Rect object is read-only')
 
         _checkForIntOrFloat(newBottom)
-        if newBottom != self.bottom: # Only run this code if the size/position has changed.
+        if newBottom != self._top + self._height: # Only run this code if the size/position has changed.
             originalTop = self._top
             if self._enableFloat:
                 self._top = newBottom - self._height
@@ -342,6 +382,8 @@ class Rect(object):
         >>> r
         Rect(left=30, top=30, width=10, height=20)
         """
+        if self.onRead is not None:
+            self.onRead(TOPLEFT)
         return (self._left, self._top)
 
     @topleft.setter
@@ -376,6 +418,8 @@ class Rect(object):
         >>> r
         Rect(left=30, top=10, width=10, height=20)
         """
+        if self.onRead is not None:
+            self.onRead(BOTTOMLEFT)
         return (self._left, self._top + self._height)
 
     @bottomleft.setter
@@ -385,7 +429,7 @@ class Rect(object):
 
         _checkForTwoIntOrFloatTuple(value)
         newLeft, newBottom = value
-        if (newLeft != self._left) or (newBottom != self.bottom): # Only run this code if the size/position has changed.
+        if (newLeft != self._left) or (newBottom != self._top + self._height): # Only run this code if the size/position has changed.
             originalLeft = self._left
             originalTop = self._top
             if self._enableFloat:
@@ -410,6 +454,8 @@ class Rect(object):
         >>> r
         Rect(left=20, top=30, width=10, height=20)
         """
+        if self.onRead is not None:
+            self.onRead(TOPRIGHT)
         return (self._left + self._width, self._top)
 
     @topright.setter
@@ -419,7 +465,7 @@ class Rect(object):
 
         _checkForTwoIntOrFloatTuple(value)
         newRight, newTop = value
-        if (newRight != self.right) or (newTop != self._top): # Only run this code if the size/position has changed.
+        if (newRight != self._left + self._width) or (newTop != self._top): # Only run this code if the size/position has changed.
             originalLeft = self._left
             originalTop = self._top
             if self._enableFloat:
@@ -444,6 +490,8 @@ class Rect(object):
         >>> r
         Rect(left=20, top=10, width=10, height=20)
         """
+        if self.onRead is not None:
+            self.onRead(BOTTOMRIGHT)
         return (self._left + self._width, self._top + self._height)
 
     @bottomright.setter
@@ -453,7 +501,7 @@ class Rect(object):
 
         _checkForTwoIntOrFloatTuple(value)
         newRight, newBottom = value
-        if (newBottom != self.bottom) or (newRight != self.right): # Only run this code if the size/position has changed.
+        if (newBottom != self._top + self._height) or (newRight != self._left + self._width): # Only run this code if the size/position has changed.
             originalLeft = self._left
             originalTop = self._top
             if self._enableFloat:
@@ -478,6 +526,8 @@ class Rect(object):
         >>> r
         Rect(left=35, top=50, width=10, height=20)
         """
+        if self.onRead is not None:
+            self.onRead(MIDTOP)
         if self._enableFloat:
             return (self._left + (self._width / 2.0), self._top)
         else:
@@ -517,6 +567,8 @@ class Rect(object):
         >>> r
         Rect(left=35, top=30, width=10, height=20)
         """
+        if self.onRead is not None:
+            self.onRead(MIDBOTTOM)
         if self._enableFloat:
             return (self._left + (self._width / 2.0), self._top + self._height)
         else:
@@ -532,12 +584,12 @@ class Rect(object):
         originalLeft = self._left
         originalTop = self._top
         if self._enableFloat:
-            if (newMidBottom != self._left + self._width / 2.0) or (newBottom != self.bottom): # Only run this code if the size/position has changed.
+            if (newMidBottom != self._left + self._width / 2.0) or (newBottom != self._top + self._height): # Only run this code if the size/position has changed.
                 self._left = newMidBottom - (self._width / 2.0)
                 self._top = newBottom - self._height
                 self.callOnChange(originalLeft, originalTop, self._width, self._height)
         else:
-            if (newMidBottom != self._left + self._width // 2) or (newBottom != self.bottom): # Only run this code if the size/position has changed.
+            if (newMidBottom != self._left + self._width // 2) or (newBottom != self._top + self._height): # Only run this code if the size/position has changed.
                 self._left = int(newMidBottom) - (self._width // 2)
                 self._top = int(newBottom) - self._height
                 self.callOnChange(originalLeft, originalTop, self._width, self._height)
@@ -556,6 +608,8 @@ class Rect(object):
         >>> r
         Rect(left=40, top=40, width=10, height=20)
         """
+        if self.onRead is not None:
+            self.onRead(MIDLEFT)
         if self._enableFloat:
             return (self._left, self._top + (self._height / 2.0))
         else:
@@ -572,12 +626,12 @@ class Rect(object):
         originalLeft = self._left
         originalTop = self._top
         if self._enableFloat:
-            if (newLeft != self._left) or (newMidLeft != self.midleft[1]): # Only run this code if the size/position has changed.
+            if (newLeft != self._left) or (newMidLeft != self._top + (self._height / 2.0)): # Only run this code if the size/position has changed.
                 self._left = newLeft
                 self._top = newMidLeft - (self._height / 2.0)
                 self.callOnChange(originalLeft, originalTop, self._width, self._height)
         else:
-            if (newLeft != self._left) or (newMidLeft != self.midleft[1]): # Only run this code if the size/position has changed.
+            if (newLeft != self._left) or (newMidLeft != self._top + (self._height // 2)): # Only run this code if the size/position has changed.
                 self._left = int(newLeft)
                 self._top = int(newMidLeft) - (self._height // 2)
                 self.callOnChange(originalLeft, originalTop, self._width, self._height)
@@ -596,6 +650,8 @@ class Rect(object):
         >>> r
         Rect(left=30, top=40, width=10, height=20)
         """
+        if self.onRead is not None:
+            self.onRead(MIDRIGHT)
         if self._enableFloat:
             return (self._left + self._width, self._top + (self._height / 2.0))
         else:
@@ -612,12 +668,12 @@ class Rect(object):
         originalLeft = self._left
         originalTop = self._top
         if self._enableFloat:
-            if (newRight != self.right) or (newMidRight != self._top + self._height / 2.0): # Only run this code if the size/position has changed.
+            if (newRight != self._left + self._width) or (newMidRight != self._top + self._height / 2.0): # Only run this code if the size/position has changed.
                 self._left = newRight - self._width
                 self._top = newMidRight - (self._height / 2.0)
                 self.callOnChange(originalLeft, originalTop, self._width, self._height)
         else:
-            if (newRight != self.right) or (newMidRight != self._top + self._height // 2): # Only run this code if the size/position has changed.
+            if (newRight != self._left + self._width) or (newMidRight != self._top + self._height // 2): # Only run this code if the size/position has changed.
                 self._left = int(newRight) - self._width
                 self._top = int(newMidRight) - (self._height // 2)
                 self.callOnChange(originalLeft, originalTop, self._width, self._height)
@@ -636,6 +692,8 @@ class Rect(object):
         >>> r
         Rect(left=35, top=40, width=10, height=20)
         """
+        if self.onRead is not None:
+            self.onRead(CENTER)
         if self._enableFloat:
             return (self._left + (self._width / 2.0), self._top + (self._height / 2.0))
         else:
@@ -675,6 +733,8 @@ class Rect(object):
         >>> r
         Rect(left=45, top=0, width=10, height=20)
         """
+        if self.onRead is not None:
+            self.onRead(CENTERX)
         if self._enableFloat:
             return self._left + (self._width / 2.0)
         else:
@@ -710,6 +770,8 @@ class Rect(object):
         >>> r
         Rect(left=0, top=40, width=10, height=20)
         """
+        if self.onRead is not None:
+            self.onRead(CENTERY)
         if self._enableFloat:
             return self._top + (self._height / 2.0)
         else:
@@ -745,6 +807,8 @@ class Rect(object):
         >>> r
         Rect(left=0, top=0, width=40, height=50)
         """
+        if self.onRead is not None:
+            self.onRead(SIZE)
         return (self._width, self._height)
 
     @size.setter
@@ -779,6 +843,8 @@ class Rect(object):
         >>> r
         Rect(left=0, top=0, width=50, height=20)
         """
+        if self.onRead is not None:
+            self.onRead(WIDTH)
         return self._width
 
     @width.setter
@@ -811,6 +877,8 @@ class Rect(object):
         >>> r
         Rect(left=0, top=0, width=10, height=50)
         """
+        if self.onRead is not None:
+            self.onRead(HEIGHT)
         return self._height
 
     @height.setter
@@ -840,6 +908,8 @@ class Rect(object):
         >>> r.area
         200
         """
+        if self.onRead is not None:
+            self.onRead(AREA)
         return self._width * self._height
 
 
@@ -854,7 +924,9 @@ class Rect(object):
         >>> r.box = (5, 15, 100, 200)
         >>> r.box
         (5, 15, 100, 200)"""
-        return (self._left, self._top, self._width, self._height)
+        if self.onRead is not None:
+            self.onRead(BOX)
+        return Box(self._left, self._top, self._width, self._height)
 
     @box.setter
     def box(self, value):
@@ -879,6 +951,98 @@ class Rect(object):
                 self._width  = int(newWidth)
                 self._height = int(newHeight)
             self.callOnChange(originalLeft, originalTop, originalWidth, originalHeight)
+
+
+    def get(self, rectAttrName):
+        # Access via the properties so that it triggers onRead().
+        if rectAttrName == TOP:
+            return self.top
+        elif rectAttrName == BOTTOM:
+            return self.bottom
+        elif rectAttrName == LEFT:
+            return self.left
+        elif rectAttrName == RIGHT:
+            return self.right
+        elif rectAttrName == TOPLEFT:
+            return self.topleft
+        elif rectAttrName == TOPRIGHT:
+            return self.topright
+        elif rectAttrName == BOTTOMLEFT:
+            return self.bottomleft
+        elif rectAttrName == BOTTOMRIGHT:
+            return self.bottomright
+        elif rectAttrName == MIDTOP:
+            return self.midtop
+        elif rectAttrName == MIDBOTTOM:
+            return self.midbottom
+        elif rectAttrName == MIDLEFT:
+            return self.midleft
+        elif rectAttrName == MIDRIGHT:
+            return self.midright
+        elif rectAttrName == CENTER:
+            return self.center
+        elif rectAttrName == CENTERX:
+            return self.centerx
+        elif rectAttrName == CENTERY:
+            return self.centery
+        elif rectAttrName == WIDTH:
+            return self.width
+        elif rectAttrName == HEIGHT:
+            return self.height
+        elif rectAttrName == SIZE:
+            return self.size
+        elif rectAttrName == AREA:
+            return self.area
+        elif rectAttrName == BOX:
+            return self.box
+        else:
+            raise PyRectException("'%s' is not a valid attribute name" % (rectAttrName))
+
+
+    def set(self, rectAttrName, value):
+        # Set via the properties so that it triggers onChange().
+        if rectAttrName == TOP:
+            self.top = value
+        elif rectAttrName == BOTTOM:
+            self.bottom = value
+        elif rectAttrName == LEFT:
+            self.left = value
+        elif rectAttrName == RIGHT:
+            self.right = value
+        elif rectAttrName == TOPLEFT:
+            self.topleft = value
+        elif rectAttrName == TOPRIGHT:
+            self.topright = value
+        elif rectAttrName == BOTTOMLEFT:
+            self.bottomleft = value
+        elif rectAttrName == BOTTOMRIGHT:
+            self.bottomright = value
+        elif rectAttrName == MIDTOP:
+            self.midtop = value
+        elif rectAttrName == MIDBOTTOM:
+            self.midbottom = value
+        elif rectAttrName == MIDLEFT:
+            self.midleft = value
+        elif rectAttrName == MIDRIGHT:
+            self.midright = value
+        elif rectAttrName == CENTER:
+            self.center = value
+        elif rectAttrName == CENTERX:
+            self.centerx = value
+        elif rectAttrName == CENTERY:
+            self.centery = value
+        elif rectAttrName == WIDTH:
+            self.width = value
+        elif rectAttrName == HEIGHT:
+            self.height = value
+        elif rectAttrName == SIZE:
+            self.size = value
+        elif rectAttrName == AREA:
+            raise PyRectException('area is a read-only attribute')
+        elif rectAttrName == BOX:
+            self.box = value
+        else:
+            raise PyRectException("'%s' is not a valid attribute name" % (rectAttrName))
 
 
     def move(self, xOffset, yOffset):
