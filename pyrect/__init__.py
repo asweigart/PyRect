@@ -5,7 +5,7 @@ import collections
 
 # TODO - unit tests needed for get/set and Box named tuple
 
-__version__ = '0.1.3'
+__version__ = '0.1.4'
 
 
 # Constants for rectangle attributes:
@@ -31,6 +31,8 @@ BOX = 'box'
 AREA = 'area'
 
 Box = collections.namedtuple('Box', 'left top width height')
+Point = collections.namedtuple('Point', 'x y')
+Size = collections.namedtuple('Size', 'width height')
 
 class PyRectException(Exception):
     """
@@ -384,7 +386,7 @@ class Rect(object):
         """
         if self.onRead is not None:
             self.onRead(TOPLEFT)
-        return (self._left, self._top)
+        return Point(x=self._left, y=self._top)
 
     @topleft.setter
     def topleft(self, value):
@@ -420,7 +422,7 @@ class Rect(object):
         """
         if self.onRead is not None:
             self.onRead(BOTTOMLEFT)
-        return (self._left, self._top + self._height)
+        return Point(x=self._left, y=self._top + self._height)
 
     @bottomleft.setter
     def bottomleft(self, value):
@@ -456,7 +458,7 @@ class Rect(object):
         """
         if self.onRead is not None:
             self.onRead(TOPRIGHT)
-        return (self._left + self._width, self._top)
+        return Point(x=self._left + self._width, y=self._top)
 
     @topright.setter
     def topright(self, value):
@@ -492,7 +494,7 @@ class Rect(object):
         """
         if self.onRead is not None:
             self.onRead(BOTTOMRIGHT)
-        return (self._left + self._width, self._top + self._height)
+        return Point(x=self._left + self._width, y=self._top + self._height)
 
     @bottomright.setter
     def bottomright(self, value):
@@ -529,9 +531,9 @@ class Rect(object):
         if self.onRead is not None:
             self.onRead(MIDTOP)
         if self._enableFloat:
-            return (self._left + (self._width / 2.0), self._top)
+            return Point(x=self._left + (self._width / 2.0), y=self._top)
         else:
-            return (self._left + (self._width // 2), self._top)
+            return Point(x=self._left + (self._width // 2), y=self._top)
 
     @midtop.setter
     def midtop(self, value):
@@ -570,9 +572,9 @@ class Rect(object):
         if self.onRead is not None:
             self.onRead(MIDBOTTOM)
         if self._enableFloat:
-            return (self._left + (self._width / 2.0), self._top + self._height)
+            return Point(x=self._left + (self._width / 2.0), y=self._top + self._height)
         else:
-            return (self._left + (self._width // 2), self._top + self._height)
+            return Point(x=self._left + (self._width // 2), y=self._top + self._height)
 
     @midbottom.setter
     def midbottom(self, value):
@@ -611,9 +613,9 @@ class Rect(object):
         if self.onRead is not None:
             self.onRead(MIDLEFT)
         if self._enableFloat:
-            return (self._left, self._top + (self._height / 2.0))
+            return Point(x=self._left, y=self._top + (self._height / 2.0))
         else:
-            return (self._left, self._top + (self._height // 2))
+            return Point(x=self._left, y=self._top + (self._height // 2))
 
 
     @midleft.setter
@@ -653,9 +655,9 @@ class Rect(object):
         if self.onRead is not None:
             self.onRead(MIDRIGHT)
         if self._enableFloat:
-            return (self._left + self._width, self._top + (self._height / 2.0))
+            return Point(x=self._left + self._width, y=self._top + (self._height / 2.0))
         else:
-            return (self._left + self._width, self._top + (self._height // 2))
+            return Point(x=self._left + self._width, y=self._top + (self._height // 2))
 
 
     @midright.setter
@@ -695,9 +697,9 @@ class Rect(object):
         if self.onRead is not None:
             self.onRead(CENTER)
         if self._enableFloat:
-            return (self._left + (self._width / 2.0), self._top + (self._height / 2.0))
+            return Point(x=self._left + (self._width / 2.0), y=self._top + (self._height / 2.0))
         else:
-            return (self._left + (self._width // 2), self._top + (self._height // 2))
+            return Point(x=self._left + (self._width // 2), y=self._top + (self._height // 2))
 
     @center.setter
     def center(self, value):
@@ -809,7 +811,7 @@ class Rect(object):
         """
         if self.onRead is not None:
             self.onRead(SIZE)
-        return (self._width, self._height)
+        return Size(width=self._width, height=self._height)
 
     @size.setter
     def size(self, value):
@@ -926,7 +928,7 @@ class Rect(object):
         (5, 15, 100, 200)"""
         if self.onRead is not None:
             self.onRead(BOX)
-        return Box(self._left, self._top, self._width, self._height)
+        return Box(left=self._left, top=self._top, width=self._width, height=self._height)
 
     @box.setter
     def box(self, value):
