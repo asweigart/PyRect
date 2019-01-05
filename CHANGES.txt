@@ -1,3 +1,4 @@
+v0.0.4, 2019/01/03 -- Added named tuples.
 v0.0.3, 2018/08/28 -- Corrections to readme and pypi page.
 v0.0.2, 2018/08/27 -- Documentation and unit test updates.
 v0.0.1, 2018/XX/XX -- Initial release.
