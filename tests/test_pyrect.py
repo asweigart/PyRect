@@ -1,6 +1,5 @@
 # TODO - We need tests for when enableFloat is True.
 
-import os
 import pytest
 import sys
 
@@ -14,7 +13,6 @@ try:
 except (ModuleNotFoundError, ImportError):
     sys.exit('Pygame is required to run these tests so we can compare PygRect\'s rectangles to Pygame\'s rectangles.')
 
-#sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pyrect
 
 
