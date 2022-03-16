@@ -5,7 +5,7 @@ import collections
 
 # TODO - unit tests needed for get/set and Box named tuple
 
-__version__ = "0.1.4"
+__version__ = "0.2.0"
 
 
 # Constants for rectangle attributes:
@@ -29,6 +29,7 @@ HEIGHT = "height"
 SIZE = "size"
 BOX = "box"
 AREA = "area"
+PERIMETER = "perimeter"
 
 Box = collections.namedtuple("Box", "left top width height")
 Point = collections.namedtuple("Point", "x y")
@@ -981,6 +982,22 @@ class Rect(object):
         if self.onRead is not None:
             self.onRead(AREA)
         return self._width * self._height
+
+
+    # PERIMETER PROPERTY
+    @property
+    def perimeter(self):
+        """The perimeter of the `Rect`, which is simply the (width + height) * 2.
+        This is a read-only attribute.
+
+        >>> r = Rect(0, 0, 10, 20)
+        >>> r.area
+        200
+        """
+        if self.onRead is not None:
+            self.onRead(AREA)
+        return (self._width + self._height) * 2
+
 
     # BOX PROPERTY
     @property

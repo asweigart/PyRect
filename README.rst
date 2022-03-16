@@ -10,7 +10,7 @@ Currently under development, though the basic features work.
 Installation
 ============
 
-    ``pip install rect``
+    ``pip install pyrect``
 
 Quickstart Guide
 ================
@@ -92,4 +92,6 @@ There are a couple other attributes as well:
     ``box (a tuple (left, top, width, height))``
 
     ``area (read-only)``
+
+    ``perimeter (read-only)``
 
