@@ -24,6 +24,7 @@ setup(
     license='BSD',
     long_description=long_description,
     packages=['pyrect'],
+    package_data={"pyrect": ["pyrect/py.typed"]},
     test_suite='tests',
     install_requires=[],
     keywords="pygame rect rectangular rectangle area",
