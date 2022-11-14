@@ -1,5 +1,5 @@
-import doctest
 import collections
+import doctest
 
 # TODO - finish doc tests
 
@@ -983,8 +983,8 @@ class Rect(object):
             self.onRead(AREA)
         return self._width * self._height
 
-
     # PERIMETER PROPERTY
+
     @property
     def perimeter(self):
         """The perimeter of the `Rect`, which is simply the (width + height) * 2.
@@ -998,8 +998,8 @@ class Rect(object):
             self.onRead(AREA)
         return (self._width + self._height) * 2
 
-
     # BOX PROPERTY
+
     @property
     def box(self):
         """A tuple of four integers: (left, top, width, height).
@@ -1083,10 +1083,12 @@ class Rect(object):
             return self.height
         elif rectAttrName == SIZE:
             return self.size
-        elif rectAttrName == AREA:
-            return self.area
         elif rectAttrName == BOX:
             return self.box
+        elif rectAttrName == AREA:
+            return self.area
+        elif rectAttrName == PERIMETER:
+            return self.perimeter
         else:
             raise PyRectException("'%s' is not a valid attribute name" % (rectAttrName))
 
@@ -1128,10 +1130,10 @@ class Rect(object):
             self.height = value
         elif rectAttrName == SIZE:
             self.size = value
-        elif rectAttrName == AREA:
-            raise PyRectException("area is a read-only attribute")
         elif rectAttrName == BOX:
             self.box = value
+        elif rectAttrName in {AREA, PERIMETER}:
+            raise PyRectException(rectAttrName + " is a read-only attribute")
         else:
             raise PyRectException("'%s' is not a valid attribute name" % (rectAttrName))
 
