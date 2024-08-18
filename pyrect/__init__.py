@@ -1083,10 +1083,12 @@ class Rect(object):
             return self.height
         elif rectAttrName == SIZE:
             return self.size
-        elif rectAttrName == AREA:
-            return self.area
         elif rectAttrName == BOX:
             return self.box
+        elif rectAttrName == AREA:
+            return self.area
+        elif rectAttrName == PERIMETER:
+            return self.perimeter
         else:
             raise PyRectException("'%s' is not a valid attribute name" % (rectAttrName))
 
@@ -1128,10 +1130,10 @@ class Rect(object):
             self.height = value
         elif rectAttrName == SIZE:
             self.size = value
-        elif rectAttrName == AREA:
-            raise PyRectException("area is a read-only attribute")
         elif rectAttrName == BOX:
             self.box = value
+        elif rectAttrName in {AREA, PERIMETER}:
+            raise PyRectException(rectAttrName + " is a read-only attribute")
         else:
             raise PyRectException("'%s' is not a valid attribute name" % (rectAttrName))
 
