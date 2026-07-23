@@ -67,7 +67,7 @@ def _checkForTwoIntOrFloatTuple(arg):
             raise PyRectException(
                 "argument must be a two-item tuple containing int or float values"
             )
-    except:
+    except (TypeError, IndexError):
         raise PyRectException(
             "argument must be a two-item tuple containing int or float values"
         )
@@ -84,7 +84,7 @@ def _checkForFourIntOrFloatTuple(arg):
             raise PyRectException(
                 "argument must be a four-item tuple containing int or float values"
             )
-    except:
+    except (TypeError, IndexError):
         raise PyRectException(
             "argument must be a four-item tuple containing int or float values"
         )
@@ -104,7 +104,7 @@ def _getRectsAndPoints(rectsOrPoints):
         except PyRectException:
             try:
                 _checkForFourIntOrFloatTuple(rectOrPoint)
-            except:
+            except PyRectException:
                 raise PyRectException("argument is not a point or a rect tuple")
             rects.append(rectOrPoint)
     return (rects, points)
@@ -167,7 +167,7 @@ def collideAllBetween(rectsOrPoints):
                 _checkForFourIntOrFloatTuple(rectOrPoint)
             else:
                 raise PyRectException()
-    except:
+    except (PyRectException, TypeError, IndexError):
         raise PyRectException('Arguments in rectsOrPoints must be 2- or 4-integer/float tuples.')
 
     raise NotImplementedError # return a list of all rects or points that collide with any other in the argument
@@ -1314,7 +1314,7 @@ class Rect(object):
         # Check if value is an (x, y) sequence or a (left, top, width, height) sequence.
         try:
             len(value)
-        except:
+        except TypeError:
             raise PyRectException(
                 "in <Rect> requires an (x, y) tuple, a (left, top, width, height) tuple, or a Rect object as left operand, not %s"
                 % (value.__class__.__name__)
@@ -1366,7 +1366,7 @@ class Rect(object):
         # Check if value is an (x, y) sequence or a (left, top, width, height) sequence.
         try:
             len(value)
-        except:
+        except TypeError:
             raise PyRectException(
                 "in <Rect> requires an (x, y) tuple, a (left, top, width, height) tuple, or a Rect object as left operand, not %s"
                 % (value.__class__.__name__)
